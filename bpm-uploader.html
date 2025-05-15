@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+  // Wake up the backend so it doesn’t miss the first upload
+  fetch("https://boa-bpm-api.onrender.com")
+    .then(() => console.log("Render backend awake"))
+    .catch(() => console.log("Ping failed, might be cold."));
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BPM Finder – Detect the Tempo of Any Song</title>
