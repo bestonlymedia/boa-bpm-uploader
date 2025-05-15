@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BPM Finder – Detect the Tempo of Any Song</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #ffffff;
+      color: #111;
+      margin: 0;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    p {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .box {
+      background: #f9f9f9;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: #222;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #d00;
+    }
+  </style>
+</head>
+<body>
+  <h1>BPM Finder – Detect the Tempo of Any Song</h1>
+  <p>Upload your audio file below. We’ll detect the BPM.</p>
+
+  <div class="box">
+    <input type="file" id="fileInput" accept=".mp3,.wav" />
+    <br />
+    <button onclick="detectBPM()">Detect BPM</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    async function detectBPM() {
+      const fileInput = document.getElementById('fileInput');
+      const resultDiv = document.getElementById('result');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        resultDiv.textContent = "Please choose a file to upload.";
+        return;
+      }
+
+      resultDiv.textContent = "Analyzing...";
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const res = await fetch("https://boa-bpm-api.onrender.com/analyze", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (data.bpm) {
+          resultDiv.style.color = "#111";
+          resultDiv.textContent = `Detected BPM: ${Math.round(data.bpm)} BPM`;
+        } else {
+          resultDiv.textContent = "Upload failed. Please try again.";
+        }
+      } catch (err) {
+        console.error(err);
+        resultDiv.textContent = "Upload failed. Please try again.";
+      }
+    }
+  </script>
+</body>
+</html>
